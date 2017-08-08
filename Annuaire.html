@@ -1,1 +1,266 @@
 
+<!doctype html>
+<html lang="fr">
+    <head>
+        
+        <style>
+            body {
+                margin:0px;
+            }
+        
+        .container {
+            position:relative;
+            width:960px;
+            margin:auto;
+        }
+        
+        .titre {
+            padding:10px;
+            border-bottom:2px solid;
+            background:rgb(250,250,250);
+        }
+        
+        .titre h1 {
+            margin:0px;
+            background-color: lightgrey;
+            font-family:sans-serif;
+            font-weight:normal;
+            text-shadow:0px 0px 1px rgba(0,0,0,0.4);
+        }
+        
+        .ajouter {
+            padding:10px;
+            border-bottom:1px solid;
+        }
+        
+        #ajouterR {
+            padding:8px;
+            background:rgb(250,250,250);
+            border:1px dashed;
+            text-shadow:0px 0px 1px;
+        }
+        
+        .ajouterforme {
+            height:440px;
+            padding:10px;
+            background:rgb(240,240,240);
+            overflow:hidden;
+            display:none;
+        }
+        
+        .ajouterforme etiq {
+            position:relative;
+            display:block;
+            width:300px;
+            height:10px;
+            float:left;
+            font-family:sans-serif;
+            font-size:12px;
+            padding:10px;
+            font-weight:bold;
+        }
+        
+        .ajouterforme input,textarea {
+            border:1px dashed;
+            width:50%;
+            padding:10px;
+            font-weight:bold;
+            border-radius:5px;
+            box-shadow:inset 0px 0px 10px rgba(0,0,0,0.2);
+        }
+        
+        #Add,#Annuler {
+            padding:10px;
+            margin:20px;
+            position:relative;
+            left:300px;
+            border:1px dashed;
+            border-radius:5px;
+            font-weight:bold;
+        }
+        
+        .entree {
+            background:rgb(230,230,230);
+            width:960px;
+            height:40px;
+            border-bottom:1px solid;
+        }
+        
+        
+        .entree .nom {
+            width:130px;
+            float:left;
+            padding:11px;
+        }
+        
+        .entree .email {
+            width:200px;
+            float:left;
+            padding:11px;
+        }
+        
+        
+        .entree .Tel {
+            width:100px;
+            float:left;
+            padding:11px;
+        }
+        
+        .entree .adresse {
+            width:250px;
+            float:left;
+            padding:11px;
+        }
+        
+        .entree .ville {
+            width:100px;
+            float:left;
+            padding:11px;
+        }
+        
+        .entree .del {
+            width:30px;
+            float:left;
+            padding:9px;
+        }
+        
+        .entree p {
+            margin:0px;
+            font-family:sans-serif;
+            font-size:12px;
+            text-shadow:0px 0px 1px rgba(0,0,0,0.4);
+        }
+        
+        .entree .del a {
+            font-family:sans-serif;
+            color:#FFF;
+            font-size:12px;
+            padding:5px;
+            background:rgb(255,100,100);
+            border-radius:8px;
+            text-decoration:none;
+        }
+        </style>
+        <script>
+            
+            
+            window.onload = function(){
+                // Bouttons
+                var ajouterBtn = document.getElementById('ajouter');
+                var ajouterformeDiv = document.querySelector('.ajouterforme')
+                var annulerBtn = document.getElementById('Annuler');
+                var AddBtn = document.getElementById('Add');
+                // champ du formulaire
+                var NomComplet = document.getElementById('NomComplet');
+                var Tel = document.getElementById('Tel');
+                var adresse = document.getElementById('adresse');
+                var ville = document.getElementById('ville');
+                var email = document.getElementById('email');
+                // Divs etc.
+                var ajouterCarnetDiv = document.querySelector('.ajouterCarnet');
+                
+                ajouterBtn.addEventListener("click", function(){
+                                            // afficher le formulaire div
+                                            ajouterformeDiv.style.display = "block";
+                                            });
+                                            
+                                            annulerBtn.addEventListener("click", function(){
+                                                                        ajouterformeDiv.style.display = "none";
+                                                                        });
+                                                                        
+                                                                        AddBtn.addEventListener("click", ajoutrerCarnet);
+                                                                        
+                                                                        ajouterCarnetDiv.addEventListener("click", removeentree);
+                                                                        
+                                                                        // Tableau de stockage
+                                                                        var Annuaire = [];
+                                                                        
+                                                                        //localStorage['ajouterCarnet'] = '[{"nom":"Mamadou","courrier":"mamadou@contact.com","Tel":"57567","adresse":"125 BREND","ville":"Ottawa"}]';
+                                                                        
+                                                                        function jsonStructure(NomComplet,Tel,adresse,ville,email){
+                                                                            this.NomComplet = NomComplet;
+                                                                            this.Tel = Tel;
+                                                                            this.adresse = adresse;
+                                                                            this.ville = ville;
+                                                                            this.email = email;
+                                                                        }
+                                                                        
+                                                                        function ajoutrerCarnet(){
+                                                                            var isNull = NomComplet.value!='' && Tel.value!='' && adresse.value!='' && ville.value!='' && email.value!='';
+                                                                            if(isNull){
+                                                                                // formater l'entrÈe dans une structure JSON valide
+                                                                                var obj = new jsonStructure(NomComplet.value,Tel.value,adresse.value,ville.value,email.value);
+                                                                                Annuaire.push(obj);
+                                                                                localStorage['ajouterCarnet'] = JSON.stringify(Annuaire);
+                                                                                ajouterformeDiv.style.display = "none";
+                                                                                clearforme();
+                                                                                afficherCarnet();
+                                                                            }
+                                                                        }
+                                                                        
+                                                                        function removeentree(e){
+                                                                            // Supprimer une entrÈe du carnet d'adresse
+                                                                            if(e.target.classList.contains('delbutton')){
+                                                                                var remID = e.target.getAttribute('data-id');
+                                                                                Annuaire.splice(remID,1);
+                                                                                localStorage['ajouterCarnet'] = JSON.stringify(Annuaire);
+                                                                                afficherCarnet();
+                                                                            }
+                                                                        }
+                                                                        
+                                                                        function clearforme(){
+                                                                            var formeFields = document.querySelectorAll('.formeFields');
+                                                                            for(var i in formeFields){
+                                                                                formeFields[i].value = '';
+                                                                            }
+                                                                        }
+                                                                        
+                                                                        function afficherCarnet(){
+                                                                            if(localStorage['ajouterCarnet'] === undefined){
+                                                                                localStorage['ajouterCarnet'] = '';
+                                                                            } else {
+                                                                                Annuaire = JSON.parse(localStorage['ajouterCarnet']);
+                                                                                // Boucle dans le tableau Annuaire puis l'insÈrer dans la page
+                                                                                ajouterCarnetDiv.innerHTML = '';
+                                                                                for(var n in Annuaire){
+                                                                                    var str = '<div class="entree">';
+                                                                                    str += '<div class="nom"><p>' + Annuaire[n].NomComplet + '</p></div>';
+                                                                                    str += '<div class="email"><p>' + Annuaire[n].email + '</p></div>';
+                                                                                    str += '<div class="Tel"><p>' + Annuaire[n].Tel + '</p></div>';
+                                                                                    str += '<div class="adresse"><p>' + Annuaire[n].adresse + '</p></div>';
+                                                                                    str += '<div class="ville"><p>' + Annuaire[n].ville + '</p></div>';
+                                                                                    str += '<div class="del"><a href="#" class="delbutton" data-id="' + n + '">Delete</a></div>';
+                                                                                    str += '</div>';
+                                                                                    ajouterCarnetDiv.innerHTML += str;
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                        
+                                                                        afficherCarnet();
+                                                                        
+            }
+        </script>
+    </head>
+    <body style="background-color: gray
+        ">
+        <div class="container">
+            <div class="titre">
+                <h1>Contacts</h1>
+            </div>
+            <div class="ajouter"><button id="ajouter">+ Add</button></div>
+            <div class="ajouterforme">
+                
+                <etiq for="NomComplet">Name: </etiq><input type="text" id="NomComplet" class="formeFields">
+                    <etiq for="Tel">Phone number: </etiq><input type="text" id="Tel" class="formeFields">
+                        <etiq for="adresse">Address: </etiq><textarea nom="adresse" id="adresse" cols="30" rows="10" class="formeFields"></textarea>
+                        <etiq for="ville">City: </etiq><input type="text" id="ville" class="formeFields">
+                            <etiq for="email">E-mail: </etiq><input type="text" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" id="email" class="formeFields" />
+                                <br><br>
+                                <button id="Add">Add</button><button id="Annuler">Cancel</button>
+                                </div>
+            <div class="ajouterCarnet">
+                
+            </div>
+        </div>
+    </body>
+</html>
